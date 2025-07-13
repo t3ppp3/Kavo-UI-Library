@@ -148,8 +148,75 @@ function Kavo:ToggleUI()
 end
 
 function Kavo.CreateLib(kavName, themeList)
-    if not themeList then
-        themeList = themes
+    themeList = themeList or themes
+
+    local isMinimized = false
+
+    -- وظيفة إنشاء زر عام
+    local function createButton(name, parent, position, imageOffset, imageSize, onClick)
+        local button = Instance.new("ImageButton")
+        button.Name = name
+        button.Parent = parent
+        button.BackgroundTransparency = 1
+        button.Position = position
+        button.Size = UDim2.new(0, 21, 0, 21)
+        button.ZIndex = 2
+        button.Image = "rbxassetid://3926305904"
+        button.ImageRectOffset = imageOffset
+        button.ImageRectSize = imageSize
+        if onClick then
+            button.MouseButton1Click:Connect(onClick)
+        end
+        return button
+    end
+
+    -- زر الإغلاق
+    local closeBtn = createButton(
+        "close",
+        MainHeader,
+        UDim2.new(0.95, 0, 0.138, 0),
+        Vector2.new(284, 4),
+        Vector2.new(24, 24),
+        function()
+            -- يغلق الواجهة بالكامل
+            if MainGui then
+                MainGui:Destroy()
+            end
+        end
+    )
+
+    -- زر التصغير (Minimize)
+    local minimizeBtn = createButton(
+        "minimize",
+        MainHeader,
+        UDim2.new(0.9, 0, 0.138, 0),
+        Vector2.new(676, 724), -- شكل التصغير من SpriteSheet
+        Vector2.new(36, 36),
+        function()
+            isMinimized = not isMinimized
+            for _, child in ipairs(MainFrame:GetChildren()) do
+                if child ~= MainHeader then
+                    child.Visible = not isMinimized
+                end
+            end
+        end
+    )
+
+    -- زر التبديل (Toggle)
+    local toggleBtn = createButton(
+        "toggleBtn",
+        MainHeader,
+        UDim2.new(0.85, 0, 0.138, 0),
+        Vector2.new(924, 724),
+        Vector2.new(36, 36),
+        function()
+            Kavo:ToggleUI()
+        end
+    )
+
+    -- باقي الكود...
+end
+
     end
     if themeList == "DarkTheme" then
         themeList = themeStyles.DarkTheme
